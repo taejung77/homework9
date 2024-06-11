@@ -1,14 +1,15 @@
 #include<stdio.h>
 #include<stdlib.h>
 
-#define MAX_VERTICES 10
+#define MAX_VERTICES 10 // 최대 정점 개수
 
-// 그래프의 인접 리스트 구조체 정의
+// 그래프의 인접 리스트 노드 구조체 정의
 typedef struct Node {
     int vertex;
     struct Node* next;
 } Node;
 
+// 그래프 구조체 정의
 typedef struct Graph {
     int numVertices;
     Node* adjLists[MAX_VERTICES];
@@ -29,9 +30,11 @@ int main() {
     int src, dest;
     Graph graph;
 
+    // 그래프 초기화
     initializeGraph(&graph);
 
     do {
+        // 메뉴 출력
         printf("\n\n");
         printf("----------------------------------------------------------------\n");
         printf("                   Graph Searches                               \n");
@@ -42,9 +45,11 @@ int main() {
         printf(" Print Graph          = p       Quit                   = q      \n");
         printf("----------------------------------------------------------------\n");
 
+        // 명령어 입력
         printf("Command = ");
         scanf(" %c", &command);
 
+        // 명령어에 따라 함수 호출
         switch(command) {
             case 'z': case 'Z':
                 initializeGraph(&graph);
@@ -96,18 +101,18 @@ int main() {
 }
 
 void initializeGraph(Graph* graph) {
-    graph->numVertices = 0;
+    graph->numVertices = 0;  // 초기 정점 개수는 0
     for (int i = 0; i < MAX_VERTICES; i++) {
-        graph->adjLists[i] = NULL;
-        graph->visited[i] = 0;
+        graph->adjLists[i] = NULL;  // 인접 리스트 초기화
+        graph->visited[i] = 0;      // 방문 배열 초기화
     }
 }
 
 Node* createNode(int v) {
-    Node* newNode = malloc(sizeof(Node));
+    Node* newNode = malloc(sizeof(Node)); // 노드 메모리 할당
     if (newNode == NULL) {
         printf("Memory allocation error.\n");
-        exit(1);
+        exit(1); // 메모리 할당 실패 시 프로그램 종료
     }
     newNode->vertex = v;
     newNode->next = NULL;
@@ -119,7 +124,7 @@ void insertVertex(Graph* graph) {
         printf("Graph: Cannot insert more than %d vertices.\n", MAX_VERTICES);
         return;
     }
-    graph->numVertices++;
+    graph->numVertices++;  // 정점 개수 증가
 }
 
 void insertEdge(Graph* graph, int src, int dest) {
@@ -127,10 +132,12 @@ void insertEdge(Graph* graph, int src, int dest) {
         printf("Graph: Vertex number out of bounds.\n");
         return;
     }
+    // src -> dest 간선 추가
     Node* newNode = createNode(dest);
     newNode->next = graph->adjLists[src];
     graph->adjLists[src] = newNode;
 
+    // dest -> src 간선 추가 (무향 그래프)
     newNode = createNode(src);
     newNode->next = graph->adjLists[dest];
     graph->adjLists[dest] = newNode;
@@ -140,13 +147,14 @@ void DFS(Graph* graph, int vertex) {
     Node* adjList = graph->adjLists[vertex];
     Node* temp = adjList;
 
-    graph->visited[vertex] = 1;
+    graph->visited[vertex] = 1; // 현재 정점 방문 표시
     printf("Visited %d \n", vertex);
 
+    // 인접 정점 방문
     while (temp != NULL) {
-        int connectedVertex = temp->vertex;
+        int connectedVertex = temp->vertex; 
 
-        if (graph->visited[connectedVertex] == 0) {
+        if (graph->visited[connectedVertex] == 0) { // 방문하지 않은 정점이면 DFS 호출
             DFS(graph, connectedVertex);
         }
         temp = temp->next;
@@ -161,21 +169,21 @@ void BFS(Graph* graph, int startVertex) {
     int front = 0;
     int rear = 0;
 
-    graph->visited[startVertex] = 1;
-    queue[rear] = startVertex;
+    graph->visited[startVertex] = 1; // 시작 정점 방문 표시
+    queue[rear] = startVertex;       // 큐에 시작 정점 추가
     rear++;
 
-    while (front < rear) {
-        int currentVertex = queue[front];
+    while (front < rear) { // 큐가 비어있지 않은 동안 반복
+        int currentVertex = queue[front]; 
         printf("Visited %d\n", currentVertex);
         front++;
 
-        temp = graph->adjLists[currentVertex];
+        temp = graph->adjLists[currentVertex]; // 현재 정점의 인접 정점 탐색
 
         while (temp) {
             int adjVertex = temp->vertex;
 
-            if (graph->visited[adjVertex] == 0) {
+            if (graph->visited[adjVertex] == 0) { // 방문하지 않은 정점이면 큐에 추가
                 queue[rear] = adjVertex;
                 rear++;
                 graph->visited[adjVertex] = 1;
@@ -193,7 +201,7 @@ void printGraph(Graph* graph) {
             printf("%d -> ", temp->vertex);
             temp = temp->next;
         }
-        printf("\n");
+        printf("NULL\n");  // 인접 리스트의 끝을 표시
     }
 }
 
@@ -205,5 +213,7 @@ void freeGraph(Graph* graph) {
             temp = temp->next;
             free(toFree);
         }
+        graph->adjLists[i] = NULL; // 인접 리스트를 NULL로 설정
     }
+    printf("Graph memory freed.\n");
 }
