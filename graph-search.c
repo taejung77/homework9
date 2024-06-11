@@ -57,21 +57,30 @@ int main() {
                 break;
             case 'e': case 'E':
                 printf("Enter source and destination vertex: ");
-                scanf("%d %d", &src, &dest);
+                if(scanf("%d %d", &src, &dest) != 2) {
+                    printf("Invalid input.\n");
+                    break;
+                }
                 insertEdge(&graph, src, dest);
                 break;
             case 'd': case 'D':
                 for(int i = 0; i < MAX_VERTICES; i++)
                     graph.visited[i] = 0;
                 printf("Enter starting vertex for DFS: ");
-                scanf("%d", &src);
+                if(scanf("%d", &src) != 1 || src >= graph.numVertices) {
+                    printf("Invalid vertex number.\n");
+                    break;
+                }
                 DFS(&graph, src);
                 break;
             case 'b': case 'B':
                 for(int i = 0; i < MAX_VERTICES; i++)
                     graph.visited[i] = 0;
                 printf("Enter starting vertex for BFS: ");
-                scanf("%d", &src);
+                if(scanf("%d", &src) != 1 || src >= graph.numVertices) {
+                    printf("Invalid vertex number.\n");
+                    break;
+                }
                 BFS(&graph, src);
                 break;
             case 'p': case 'P':
@@ -86,7 +95,6 @@ int main() {
     return 0;
 }
 
-// 그래프 초기화 함수
 void initializeGraph(Graph* graph) {
     graph->numVertices = 0;
     for (int i = 0; i < MAX_VERTICES; i++) {
@@ -95,15 +103,17 @@ void initializeGraph(Graph* graph) {
     }
 }
 
-// 새로운 노드 생성 함수
 Node* createNode(int v) {
     Node* newNode = malloc(sizeof(Node));
+    if (newNode == NULL) {
+        printf("Memory allocation error.\n");
+        exit(1);
+    }
     newNode->vertex = v;
     newNode->next = NULL;
     return newNode;
 }
 
-// 정점 추가 함수
 void insertVertex(Graph* graph) {
     if (graph->numVertices >= MAX_VERTICES) {
         printf("Graph: Cannot insert more than %d vertices.\n", MAX_VERTICES);
@@ -112,7 +122,6 @@ void insertVertex(Graph* graph) {
     graph->numVertices++;
 }
 
-// 간선 추가 함수
 void insertEdge(Graph* graph, int src, int dest) {
     if (src >= graph->numVertices || dest >= graph->numVertices) {
         printf("Graph: Vertex number out of bounds.\n");
@@ -127,7 +136,6 @@ void insertEdge(Graph* graph, int src, int dest) {
     graph->adjLists[dest] = newNode;
 }
 
-// DFS 구현 함수
 void DFS(Graph* graph, int vertex) {
     Node* adjList = graph->adjLists[vertex];
     Node* temp = adjList;
@@ -145,7 +153,6 @@ void DFS(Graph* graph, int vertex) {
     }
 }
 
-// BFS 구현 함수
 void BFS(Graph* graph, int startVertex) {
     Node* adjList = graph->adjLists[startVertex];
     Node* temp = adjList;
@@ -178,7 +185,6 @@ void BFS(Graph* graph, int startVertex) {
     }
 }
 
-// 그래프 출력 함수
 void printGraph(Graph* graph) {
     for (int v = 0; v < graph->numVertices; v++) {
         Node* temp = graph->adjLists[v];
@@ -191,7 +197,6 @@ void printGraph(Graph* graph) {
     }
 }
 
-// 그래프 메모리 해제 함수
 void freeGraph(Graph* graph) {
     for (int i = 0; i < graph->numVertices; i++) {
         Node* temp = graph->adjLists[i];
