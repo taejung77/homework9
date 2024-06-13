@@ -196,7 +196,7 @@ void BFS(Graph* graph, int startVertex) {
 void printGraph(Graph* graph) {
     for (int v = 0; v < graph->numVertices; v++) {
         Node* temp = graph->adjLists[v];
-        printf("\n Vertex %d\n: ", v);
+        printf("\n Vertex %d: ", v);
         while (temp) {
             printf("%d -> ", temp->vertex);
             temp = temp->next;
