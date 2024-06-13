@@ -96,7 +96,7 @@ int main() {
                 break;
         }
     } while(command != 'q' && command != 'Q');
-
+    prinf("[----- [Lee Tae Jeong] [2023041062] -----]");
     return 0;
 }
 
